@@ -1,9 +1,11 @@
 
+import os
+
+PORT = os.environ.get("PORT", 8000)  # Default to 8000 if PORT is not set
 
 # from pathlib import Path
 
 # Add these at the top of your settings.py
-import os
 from dotenv import load_dotenv
 from pathlib import Path
 from urllib.parse import urlparse
