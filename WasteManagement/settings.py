@@ -104,7 +104,8 @@ WSGI_APPLICATION = 'WasteManagement.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
+        # 'NAME': tmpPostgres.path.replace('/', ''),
+        'NAME': tmpPostgres.path.decode().replace('/', ''),
         'USER': tmpPostgres.username,
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
