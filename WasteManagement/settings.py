@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-2s2hkz86bf7pc6_n+t-jqa7+mkqny3h)syt2n*7%-fm8$)p!m5'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # 8th Feb
 # SECRET_KEY = os.getenv('django-insecure-2s2hkz86bf7pc6_n+t-jqa7+mkqny3h)syt2n*7%-fm8$)p!m5', 'fallback-secret-key')
