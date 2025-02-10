@@ -561,6 +561,7 @@ def submission_status(request):
     alert_type = request.GET.get('alert_type', 'info')  # Default to 'info' if not provided
     message = request.GET.get('message', 'No status available.')
     return render(request, 'submission_status.html', {'alert_type': alert_type, 'message': message})
+
 def submit_report(request):
     """
     Handles waste report submission with global duplicate detection and scoring.
@@ -573,19 +574,24 @@ def submit_report(request):
             longitude_str = request.POST.get('longitude')
             waste_type = request.POST.get('waste_type', 'General')  # Default to "General" if not provided
 
-            # Check if all required fields are present
+            # Check if any required field is missing
             if not all([photo, location, latitude_str, longitude_str, waste_type]):
                 return HttpResponseRedirect(
                     f"{reverse('submission_status')}?alert_type=danger&message=All+fields+are+required+to+submit+the+report."
                 )
 
-            # Check if latitude and longitude are valid float values
+            # Validate latitude and longitude
+            if not latitude_str or not longitude_str:
+                return HttpResponseRedirect(
+                    f"{reverse('submission_status')}?alert_type=danger&message=Latitude+and+longitude+must+not+be+empty."
+                )
+
             try:
                 latitude = float(latitude_str)
                 longitude = float(longitude_str)
             except ValueError:
                 return HttpResponseRedirect(
-                    f"{reverse('submission_status')}?alert_type=danger&message=Invalid+latitude+or+longitude+value."
+                    f"{reverse('submission_status')}?alert_type=danger&message=Invalid+latitude+or+longitude+values."
                 )
 
             # Generate hash for the photo
