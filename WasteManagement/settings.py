@@ -3,7 +3,7 @@ import dj_database_url
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()  # Load environment variables
+load_dotenv()  # Load environment variables from a .env file
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,7 +15,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 CSRF_TRUSTED_ORIGINS = ['https://ecotrackapp.onrender.com']
 
 # Database Setup
-DATABASE_URL = os.getenv("postgresql://neondb_owner:npg_cSgwjYQz09Ju@ep-gentle-sky-a1dn2aqf-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require")
+DATABASE_URL = os.getenv("DATABASE_URL")  # Get the DATABASE_URL from environment variables
 
 if DATABASE_URL:
     DATABASES = {
