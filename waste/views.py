@@ -361,17 +361,26 @@ from admin_app.models import WasteReportStatus
 from .utils import get_image_hash, haversine
 
 # Utility Functions
+import math
+
 def haversine(lat1, lon1, lat2, lon2):
     """
     Calculate the great-circle distance between two points on Earth.
     """
+    try:
+        # Ensure that all inputs are valid floats
+        lat1, lon1, lat2, lon2 = map(float, [lat1, lon1, lat2, lon2])
+    except ValueError:
+        raise ValueError("Invalid latitude or longitude value. They must be valid numbers.")
+    
     R = 6371  # Radius of the Earth in kilometers
-    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])  # Convert degrees to radians
     dlat = lat2 - lat1
     dlon = lon2 - lon1
     a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
     c = 2 * math.asin(math.sqrt(a))
     return R * c * 1000  # Convert to meters
+
 
 
 def get_image_hash(image_file):
@@ -552,7 +561,6 @@ def submission_status(request):
     alert_type = request.GET.get('alert_type', 'info')  # Default to 'info' if not provided
     message = request.GET.get('message', 'No status available.')
     return render(request, 'submission_status.html', {'alert_type': alert_type, 'message': message})
-
 def submit_report(request):
     """
     Handles waste report submission with global duplicate detection and scoring.
@@ -561,13 +569,23 @@ def submit_report(request):
         try:
             photo = request.FILES.get('photo')
             location = request.POST.get('location')
-            latitude = float(request.POST.get('latitude'))
-            longitude = float(request.POST.get('longitude'))
+            latitude_str = request.POST.get('latitude')
+            longitude_str = request.POST.get('longitude')
             waste_type = request.POST.get('waste_type', 'General')  # Default to "General" if not provided
 
-            if not all([photo, location, latitude, longitude, waste_type]):
+            # Check if all required fields are present
+            if not all([photo, location, latitude_str, longitude_str, waste_type]):
                 return HttpResponseRedirect(
                     f"{reverse('submission_status')}?alert_type=danger&message=All+fields+are+required+to+submit+the+report."
+                )
+
+            # Check if latitude and longitude are valid float values
+            try:
+                latitude = float(latitude_str)
+                longitude = float(longitude_str)
+            except ValueError:
+                return HttpResponseRedirect(
+                    f"{reverse('submission_status')}?alert_type=danger&message=Invalid+latitude+or+longitude+value."
                 )
 
             # Generate hash for the photo
